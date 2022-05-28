@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  nginx:
+    # image                   : nginx:1.19.6
+    build: requirements/nginx
+    volumes:
+      # - /Users/yamadaiori/programming/42/inception/srcs/requirements/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - /tmp/iyamada/wordpress:/var/www/html
+    ports:
+      # - 8080:443
+      - 8080:80
+    depends_on:
+      - wordpress
+    container_name          : nginx
+    environment:
+      - NGINX_HOST=${DOMAIN_NAME}
+      - NGINX_PORT=${NGINX_PORT}
+    restart                 : always
+
+  wordpress:
+    image                   : wordpress:5.6-php7.4-fpm
+    depends_on:
+      - mariadb
+    volumes:
+      - /tmp/iyamada/wordpress:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST     : ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_USER     : ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD : ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME     : ${MYSQL_DATABASE}
+    container_name          : wordpress
+    restart                 : always
+
+  mariadb:
+    image                   : mariadb
+    volumes:
+      - /tmp/iyamada/mariadb:/var/lib/mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
+      MARIADB_DATABASE      : ${MYSQL_DATABASE}
+      MARIADB_USER          : ${MYSQL_USER}
+      MARIADB_PASSWORD      : ${MYSQL_PASSWORD}
+    ports:
+      - 3306:3306
+    container_name          : mariadb
+    restart                 : always
+
+volumes:
+    mariadb:
