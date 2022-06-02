@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# set -x
+
 if [ -d "/run/mysqld" ]; then
 	echo "[log info] : mysqld exists"
 	chown -R mysql:mysql /run/mysqld
@@ -28,7 +30,8 @@ else
 	echo "[log info] : \${MARIADB_USER}          : ${MARIADB_USER}"
 	echo "[log info] : \${MARIADB_USER_PASS}     : ${MARIADB_USER_PASS}"
 	mkdir -p /var/lib/mysql/mysql
-	chown -R mysql:mysql /var/lib/mysql/mysql
+	chown -R mysql:mysql /var/lib/mysql
+	# chown -R mysql:mysql /var/lib/mysql/mysql
 	mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
 
 	tfile=`mktemp`

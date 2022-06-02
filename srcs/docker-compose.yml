@@ -1,54 +1,69 @@
 version: '3.8'
 services:
   nginx:
-    build                   : requirements/nginx
+    build         : requirements/nginx
+    container_name: nginx
+    restart       : on-failure
+    depends_on:
+      - wordpress
     volumes:
-      - /tmp/iyamada/wordpress:/var/www/html
+      - wp_data:/var/www/html
+    networks:
+      - frontend
+    env_file:
+      - .env
     ports:
       # - 8080:443
       - 8080:80
-    depends_on:
-      - wordpress
-    container_name          : nginx
-    environment:
-      - NGINX_HOST=${DOMAIN_NAME}
-      - NGINX_PORT=${NGINX_PORT}
-    restart                 : always
 
   wordpress:
-    build                   : requirements/wordpress
+    build         : requirements/wordpress
+    container_name: wordpress
+    restart       : on-failure
     depends_on:
       - mariadb
     volumes:
-      - /tmp/iyamada/wordpress:/var/www/html
-    environment:
-      WORDPRESS_DB_HOST         : ${MYSQL_HOST}
-      WORDPRESS_DB_USER         : ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD     : ${MYSQL_PASSWORD}
-      WORDPRESS_DB_NAME         : ${MYSQL_DATABASE}
-      WORDPRESS_ADMIN_USER      : ${WORDPRESS_ADMIN_USER}
-      WORDPRESS_ADMIN_USER_PASS : ${WORDPRESS_ADMIN_USER_PASS}
-      WORDPRESS_ADMIN_EMAIL     : ${WORDPRESS_ADMIN_EMAIL}
-    container_name          : wordpress
-    restart                 : always
+      - wp_data:/var/www/html
+    networks:
+      - frontend
+      - backend
+    env_file:
+      - .env
     ports:
       - 9000:9000
 
   mariadb:
-    build                   : requirements/mariadb
+    build          : requirements/mariadb
+    container_name : mariadb
+    restart        : on-failure
     volumes:
-      - /tmp/iyamada/mariadb:/var/lib/mariadb
+      - db_data:/var/lib/mysql
+    networks:
+      - backend
     env_file:
       - .env
-    # environment:
-    #   MARIADB_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
-    #   MARIADB_DATABASE      : ${MYSQL_DATABASE}
-    #   MARIADB_USER          : ${MYSQL_USER}
-    #   MARIADB_PASSWORD      : ${MYSQL_PASSWORD}
     ports:
       - 3306:3306
-    container_name          : mariadb
-    restart                 : always
 
 volumes:
-    mariadb:
+    wp_data:
+      driver: local
+      driver_opts:
+        type  : none
+        o     : bind
+        device: /Users/yamadaiori/data/wordpress
+    db_data:
+      driver: local
+      driver_opts:
+        type  : none
+        o     : bind
+        device: /Users/yamadaiori/data/mariadb
+
+networks:
+  frontend:
+    driver: custom-driver-1
+  backend:
+    driver: custom-driver-2
+    driver_opts:
+      foo: "1"
+      bar: "2"
