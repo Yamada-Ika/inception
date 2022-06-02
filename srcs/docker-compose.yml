@@ -1,10 +1,8 @@
 version: '3.8'
 services:
   nginx:
-    # image                   : nginx:1.19.6
-    build: requirements/nginx
+    build                   : requirements/nginx
     volumes:
-      # - /Users/yamadaiori/programming/42/inception/srcs/requirements/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - /tmp/iyamada/wordpress:/var/www/html
     ports:
       # - 8080:443
@@ -18,28 +16,35 @@ services:
     restart                 : always
 
   wordpress:
-    image                   : wordpress:5.6-php7.4-fpm
+    build                   : requirements/wordpress
     depends_on:
       - mariadb
     volumes:
       - /tmp/iyamada/wordpress:/var/www/html
     environment:
-      WORDPRESS_DB_HOST     : ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_USER     : ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD : ${MYSQL_PASSWORD}
-      WORDPRESS_DB_NAME     : ${MYSQL_DATABASE}
+      WORDPRESS_DB_HOST         : ${MYSQL_HOST}
+      WORDPRESS_DB_USER         : ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD     : ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME         : ${MYSQL_DATABASE}
+      WORDPRESS_ADMIN_USER      : ${WORDPRESS_ADMIN_USER}
+      WORDPRESS_ADMIN_USER_PASS : ${WORDPRESS_ADMIN_USER_PASS}
+      WORDPRESS_ADMIN_EMAIL     : ${WORDPRESS_ADMIN_EMAIL}
     container_name          : wordpress
     restart                 : always
+    ports:
+      - 9000:9000
 
   mariadb:
-    image                   : mariadb
+    build                   : requirements/mariadb
     volumes:
       - /tmp/iyamada/mariadb:/var/lib/mariadb
-    environment:
-      MARIADB_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
-      MARIADB_DATABASE      : ${MYSQL_DATABASE}
-      MARIADB_USER          : ${MYSQL_USER}
-      MARIADB_PASSWORD      : ${MYSQL_PASSWORD}
+    env_file:
+      - .env
+    # environment:
+    #   MARIADB_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
+    #   MARIADB_DATABASE      : ${MYSQL_DATABASE}
+    #   MARIADB_USER          : ${MYSQL_USER}
+    #   MARIADB_PASSWORD      : ${MYSQL_PASSWORD}
     ports:
       - 3306:3306
     container_name          : mariadb

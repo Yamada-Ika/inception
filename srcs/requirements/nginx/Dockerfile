@@ -1,4 +1,4 @@
-FROM alpine:3.16
+FROM alpine:3.14
 
 RUN apk --update add --no-cache --virtual .builddeps nginx
 
