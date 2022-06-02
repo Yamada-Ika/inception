@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# set -x
-
 if [ -d "/run/mysqld" ]; then
     echo "[log info] : mysqld exists"
     chown -R mysql:mysql /run/mysqld

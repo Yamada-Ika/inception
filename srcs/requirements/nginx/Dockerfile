@@ -14,7 +14,7 @@ RUN apk --update add --no-cache --virtual .builddeps \
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY conf/wp.conf /etc/nginx/conf.d/wp.conf
 COPY tools/nginx_start.sh /usr/local/bin/
-RUN chmod 777 /usr/local/bin/nginx_start.sh
+RUN  chmod 777 /usr/local/bin/nginx_start.sh
 
 EXPOSE 80
 
