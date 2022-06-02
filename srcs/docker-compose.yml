@@ -14,14 +14,15 @@ services:
       - .env
     ports:
       # - 8080:443
-      - 8080:80
+      - 80:80
 
   wordpress:
     build         : requirements/wordpress
     container_name: wordpress
     restart       : on-failure
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     volumes:
       - wp_data:/var/www/html
     networks:
@@ -29,8 +30,6 @@ services:
       - backend
     env_file:
       - .env
-    ports:
-      - 9000:9000
 
   mariadb:
     build          : requirements/mariadb
@@ -40,10 +39,13 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-p${MYSQL_ROOT_PASSWORD}", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 3s
+      retries: 5
+      start_period: 30s
     env_file:
       - .env
-    ports:
-      - 3306:3306
 
 volumes:
     wp_data:
@@ -61,9 +63,5 @@ volumes:
 
 networks:
   frontend:
-    driver: custom-driver-1
+    driver: bridge
   backend:
-    driver: custom-driver-2
-    driver_opts:
-      foo: "1"
-      bar: "2"
