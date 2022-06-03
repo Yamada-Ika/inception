@@ -2,6 +2,7 @@ version: '3.8'
 services:
   nginx:
     build         : requirements/nginx
+    image         : nginx
     container_name: nginx
     restart       : on-failure
     depends_on:
@@ -16,6 +17,7 @@ services:
       - 443:443
   wordpress:
     build         : requirements/wordpress
+    image         : wordpress
     container_name: wordpress
     restart       : on-failure
     depends_on:
@@ -30,9 +32,10 @@ services:
       - .env
 
   mariadb:
-    build          : requirements/mariadb
-    container_name : mariadb
-    restart        : on-failure
+    build         : requirements/mariadb
+    image         : mariadb
+    container_name: mariadb
+    restart       : on-failure
     volumes:
       - db_data:/var/lib/mysql
     networks:

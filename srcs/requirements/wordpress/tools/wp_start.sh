@@ -42,10 +42,10 @@ if ! wp core is-installed --path=/var/www/html --allow-root &> /dev/null; then
 
     echo "[log info] : creating user ..."
     wp user create \
-        $WORDPRESS_AUTHOR_USER \
-        $WORDPRESS_AUTHOR_EMAIL \
+        ${WORDPRESS_AUTHOR_USER} \
+        ${WORDPRESS_AUTHOR_EMAIL} \
         --role=author \
-        --user_pass=$WORDPRESS_AUTHOR_USER_PASS \
+        --user_pass=${WORDPRESS_AUTHOR_USER_PASS} \
         --allow-root \
         --path=/var/www/html
 else
