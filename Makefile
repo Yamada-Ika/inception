@@ -49,12 +49,7 @@ clean-docker:
 	-docker volume rm $$(docker volume ls -q)
 	-docker network rm $$(docker network ls -q) 2> /dev/null
 
-run: build up
+help:
+	@echo "Usage: make [target]"
 
-rund: build
-	docker-compose -f srcs/docker-compose.yml up -d
-
-ps:
-	docker ps -a
-
-re: fclean run
+h: help
